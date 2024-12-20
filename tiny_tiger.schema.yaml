@@ -68,7 +68,7 @@ simplification:
 
 ## Lua 配置: 日期、时间
 date_translator:
-  date: dda                         # 20080909 格式
+  date: dda                         # 见 lua/date_translator 的时间格式，可自定义
 
 
 speller:
