@@ -1,0 +1,134 @@
+# Rime schema
+# encoding: utf-8
+
+schema:     
+  version: '1.0'                        # 這是文字类型而非整数或小数，如 "1.2.3"，按日期形式比较稳妥
+  schema_id: tiny_tiger                 # 文件名里 *.schema.yaml 之前的部分相同，通常小写字母，数字，下划线组成
+  name: 虎码                            # 在 switches 方案选单中屏示的名称
+  author:
+    - 'Loyistro'
+  description: |
+    自制虎码单字
+    按 ` 键进入拼音反查 
+  dependencies:                         # 如果本方案依赖于其他方案（通常会委托其他方案作为反查，抑或2种或多种方案混用时）
+    - luna_pinyin_simp                  # 依赖拼音反查
+
+
+## 预设 0 为前者，1 为后者
+## reset: 默认状态。注释掉后，切换窗口时不会重置到默认状态
+## states: 方案选单显示的名称。可以注释掉，仍可以通过快捷键切换
+## abbrev: 默认的缩写取 states 的第一个字符，abbrev 可自定义一个字符
+switches: 
+  - name: ascii_mode                    # 中英文输入转换，default 中定义了开关记忆所以没有 reset
+    states: [ 中, A ]
+  - name: ascii_punct                   # 中英文标点转换，default 中定义了开关记忆所以没有 reset
+    states: [ "。，", ".," ]
+  - name: simplification                # 简繁转换，default 中定义了开关记忆所以没有 reset
+    states: [ 简, 繁 ]
+  # - name: full_shape                  # 全/半角符号，开启全角时英文字母也为全角
+  #   reset: 0
+  #   states: [ "半", "全" ]
+
+
+## 排列顺序有强要求，不要随便改
+engine:
+  processors:                           # 这批组件处理各种按键消息
+    - ascii_composer                    # 处理西文模式及中西文切换
+    - recognizer                        # 与 segmentors/matcher 搭配，处理特定规则的输入码，如反查、网址、特殊符号等
+    - key_binder                        # 在特定条件下将按键固定到其他按键上，如重定义逗号、句号作为候选翻页、开关快捷键等
+    - speller                           # 拼写处理器，将用户按键追加到输入码中
+    - punctuator                        # 处理符号按键
+    - selector                          # 处理候选词的选择（上下、翻页、序号选择）
+    - navigator                         # 处理输入栏内的光标移动
+    - express_editor                    # 处理空格键（确认输入）、回车键（直接上屏）、退格键（删除输入）等
+  segmentors:                           # 这批组件识别不同内容类型，将输入码分段并加上tag
+    - ascii_segmentor                   # 标识西文段落（譬如在西文模式下）字母直接上屏
+    - matcher                           # 使用 recognizer 中定义的正则表达式来匹配输入码
+    - abc_segmentor                     # 标识常规的文字段落，加上abc这个tag           
+    - punct_segmentor                   # 标识句读段落（键入标点符号用）加上punct这个tag
+    - fallback_segmentor                # 无法被上述切分器识别的都落入到这里，并负责直接回显
+  translators:                          # 这批组件翻译特定类型的编码段为一组候选文字
+    - punct_translator                  # 标点符号翻译器
+    - lua_translator@*date_translator   # 日期、时间
+    - table_translator                  # 码表翻译器，用仓頡、五笔等码表的输入方案，可加载多个实例
+    - reverse_lookup_translator         # 反查翻译器，用另一種编码方案查码
+  filters:                              # 这批组件过滤翻译的结果，自定义滤镜皆可使用开关调控
+    - uniquifier                        # 候选字去重，有可能来自simplifier
+    - simplifier@simplification         # 简繁转换
+
+
+## 简繁切换，简繁(+部分异体)滤镜，四选一
+simplification:  
+  opencc_config: s2t.json           # 简 → 繁
+  # opencc_config: s2tw.json        # 简 → 台湾正体
+  # opencc_config: s2hk.json        # 简 → 香港繁体
+  # opencc_config: s2twp.json       # 简 → 台湾正体（含常用词汇如：软体→軟體、鼠标→滑鼠）
+  option_name: simplification
+  tips: all                         #all字词|char字
+
+## Lua 配置: 日期、时间
+date_translator:
+  date: dda                         # 20080909 格式
+
+
+speller:
+  max_code_length: 4                              # 形码最大码长，超过则顶字上屏
+  auto_clear: max_length                          # 自动清屏，手动任一键 manual，空码自动 auto，最长码顶码 max_length，前两项配合 (enable_completion: true)
+  auto_select: true                               # 自动上屏
+  alphabet: "[;'zyxwvutsrqponmlkjihgfedcba]"      # 定义本方案输入键，不想让某个标点/字母直接上屏，例如此处为打开分号引导的快符功能（分号作为码元）                 
+  auto_select_pattern: ^;\w+|^\w{4}$              # 自动上屏规则，以分号开头的字符串或仅由四个字符组成的字符串
+  # initials: "abcdefghijklmnopqrstuvwxyz;'"      # 定义仅作为起始码的键，排除 ` 让单个的 ` 可以直接上屏   
+
+
+## xform -- 改写（不保留原形）
+## derive -- 衍生（保留原形）
+## abbrev -- 简拼（出字优先级较上两组更低）
+## fuzz -- 略拼（此种简拼仅组词，不出单字）
+## xlit -- 变换（适合大量一对一变换）
+## erase -- 删除
+translator:
+  dictionary: tiny_tiger                 # 挂载定制词库合集 tiny_tiger.dict.yaml
+  enable_encoder: false                  # 是否开启自动造词（仅table_translator有效）
+  encode_commit_history: false           # 是否对已上屏词自动成词（仅table_translator有效）
+  # max_phrase_length: 4                 # 最大自动成词词长（仅table_translator有效）
+  enable_correction: false               # 启用自动纠错（仅table_translator有效）
+  enable_sentence: false                 # 是否开启自动造句
+  enable_user_dict: false                # 是否开启用户词典（用户词典记录动态字词频、用户词）
+  enable_completion: true                # 提前显示尚未输入完整码的字（仅table_translator有效）  
+  comment_format:                        # 自定义提示编码格式
+    # - "xform/~/ /"                     # 删除皮肤中编码提示前的~号
+    # - "xform/^/ /"                     # 增加皮肤中编码提示前面的间距
+
+
+## 反查时前缀会消失，影响打英文，所以可以设定为两个字母，或改成一个非字母符号
+reverse_lookup:
+  dictionary: luna_pinyin_simp           # 反查所得提示码的码表
+  preedit_format:                        # 上屏码回显
+    - "xform/([nl])v/$1ü/"               # 显示为 nü lü
+    - "xform/([nl])ue/$1üe/"             # 显示为 nüe lüe
+    - "xform/([jqxy])v/$1u/"             # 显示为 ju qu xu yu
+  prefix: "`"                            # 反查前缀，与 recognizer 匹配
+  suffix: "`"                            # 反查后缀
+  tips: "（拼音反查）"                     # 反查提示
+
+
+## 处理符合特定规则的输入码，如网址、反查
+recognizer:
+  import_preset: default                  # 从 default.yaml 继承通用的
+  patterns:                               # 再增加方案专有的
+    punct: '^/([0-9]0?|[A-Za-z]+)$'       # 匹配/号开头，以一个[0-9]数字加0次或者1次数字0为结尾；或者以1个或多个[字母]为结尾。
+    reverse_lookup: "^`[a-z]*`?$"         # 匹配以 ` 开头，可以没有或有一个单引号 ' 结尾的字符串        
+
+
+## 快捷键、标点、符号均继承自独立文档
+punctuator:
+  full_shape:
+    __include: punctuation:/punctuator/full_shape          # 从 punctuation.yaml 继承已改良过的  
+  half_shape:
+    __include: punctuation:/punctuator/half_shape          # 从 punctuation.yaml 继承已改良过的  
+  symbols:
+    __include: symbols:/punctuator/symbols                 # 从 symbols.yaml 继承已改良过的 
+  
+key_binder:
+  bindings:
+    __include: key_bindings:/key_binder/bindings           # 从 key_bindings.yaml 继承已改良过的
