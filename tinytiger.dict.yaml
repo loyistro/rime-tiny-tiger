@@ -7,7 +7,7 @@
 #
 #
 ---
-name: tiny_tiger                 # 命名要与文件名一致
+name: tinytiger                 # 命名要与文件名一致
 import_tables:
    # - dicts/tiger_official       # 虎码官方单字，需使用时取消注释该项
   - dicts/8105                    # 虎码为基础的通用汉字规范

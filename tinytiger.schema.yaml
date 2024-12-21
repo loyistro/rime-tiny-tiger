@@ -3,8 +3,8 @@
 
 schema:     
   version: '1.0'                        # 這是文字类型而非整数或小数，如 "1.2.3"，按日期形式比较稳妥
-  schema_id: tiny_tiger                 # 文件名里 *.schema.yaml 之前的部分相同，通常小写字母，数字，下划线组成
-  name: 虎码                            # 在 switches 方案选单中屏示的名称
+  schema_id: tinytiger                 # 文件名里 *.schema.yaml 之前的部分相同，通常小写字母，数字，下划线组成
+  name: 小虎码                            # 在 switches 方案选单中屏示的名称
   author:
     - 'Loyistro'
   description: |
@@ -87,7 +87,7 @@ speller:
 ## xlit -- 变换（适合大量一对一变换）
 ## erase -- 删除
 translator:
-  dictionary: tiny_tiger                 # 挂载定制词库合集 tiny_tiger.dict.yaml
+  dictionary: tinytiger                 # 挂载定制词库合集 tinytiger.dict.yaml
   enable_encoder: false                  # 是否开启自动造词（仅table_translator有效）
   encode_commit_history: false           # 是否对已上屏词自动成词（仅table_translator有效）
   # max_phrase_length: 4                 # 最大自动成词词长（仅table_translator有效）
