@@ -30,7 +30,16 @@ translator:
 simplifier:
   option_name: zh_simp
 
+
+## 快捷键、标点、符号均继承自独立文档
+punctuator:
+  full_shape:
+    __include: punctuation:/punctuator/full_shape          # 从 punctuation.yaml 继承已改良过的  
+  half_shape:
+    __include: punctuation:/punctuator/half_shape          # 从 punctuation.yaml 继承已改良过的  
+  symbols:
+    __include: symbols:/punctuator/symbols                  # 从 symbols.yaml 继承已改良过的 
+  
 key_binder:
-  bindings/+:
-    - { when: always, accept: Control+Shift+4, toggle: zh_simp }
-    - { when: always, accept: Control+Shift+dollar, toggle: zh_simp }
+  bindings:
+    __include: key_bindings:/key_binder/bindings        # 从 key_bindings.yaml 继承已改良过的
