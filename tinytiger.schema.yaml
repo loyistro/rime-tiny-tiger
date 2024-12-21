@@ -11,7 +11,7 @@ schema:
     自制虎码单字
     按 ` 键进入拼音反查 
   dependencies:                         # 如果本方案依赖于其他方案（通常会委托其他方案作为反查，抑或2种或多种方案混用时）
-    - luna_pinyin_simp                  # 依赖拼音反查
+    - pinyin_simp                       # 依赖拼音反查
 
 
 ## 预设 0 为前者，1 为后者
@@ -102,7 +102,7 @@ translator:
 
 ## 反查时前缀会消失，影响打英文，所以可以设定为两个字母，或改成一个非字母符号
 reverse_lookup:
-  dictionary: luna_pinyin_simp           # 反查所得提示码的码表
+  dictionary: pinyin_simp           # 反查所得提示码的码表
   preedit_format:                        # 上屏码回显
     - "xform/([nl])v/$1ü/"               # 显示为 nü lü
     - "xform/([nl])ue/$1üe/"             # 显示为 nüe lüe
