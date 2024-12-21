@@ -4,7 +4,8 @@
 # 用分号引导，可一键上屏的快符标点，可自己改，格式是：标点+tab+分号字母
 #
 ---
-name: quick_symbols        # 命名要与文件名一致
+name: quick_symbols     # 命名要与文件名一致
+version: "1.0"          # 版本号
 sort: by_weight         # by_weight（按权重排序） | original（按码表顺序排序）
 use_preset_vocabulary: false
 columns:                # 不写 columns 属性时，默认顺序为：
