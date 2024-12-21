@@ -16,7 +16,7 @@ chord_duration: 0.1  # seconds
 show_notifications_when: appropriate
 
 style:
-  color_scheme: native
+  color_scheme: ink
   # Optional: define both light and dark color schemes to match system appearance
   #color_scheme: solarized_light
   #color_scheme_dark: solarized_dark
@@ -24,7 +24,7 @@ style:
   # horizontal is Deprecated since 0.36, Squirrel 0.15, removed since 1.0.1
   candidate_list_layout: stacked  # stacked | linear
   text_orientation: horizontal  # horizontal | vertical
-  inline_preedit: true
+  inline_preedit: true    # 拼音位于：行内 true (默认) | 候选框 false
   # Whether to embed selected candidate as text in input field
   inline_candidate: false
   # Whether candidate panel stick to screen edge to reduce jumping
@@ -32,7 +32,8 @@ style:
   # Whether transparent colors stack on each other
   mutual_exclusive: false
   # Whether to use a translucent background. Only visible when background color is transparent
-  translucency: false
+  translucency: false     # 候选词位于：行内 true | 候选框 false (默认)，第二项是透明度，同时启用则是盲打效果
+  # alpha: 0.0001
 
   corner_radius: 7
   hilited_corner_radius: 0
@@ -51,16 +52,16 @@ style:
   # format using %@ and %c is deprecated since 1.0, Squirrel 1.0
   # %@ is automatically expanded to "[candidate] [comment]"
   # and %c is replaced by "[label]"
-  candidate_format: '[label]. [candidate] [comment]'
+  candidate_format: '[label]  [candidate] [comment]'    # 候选框样式
 
   # adjust the base line of text
   #base_offset: 0
   font_face: 'Avenir'
-  font_point: 16
+  font_point: 18
   #label_font_face: 'Avenir'
-  #label_font_point: 12
+  label_font_point: 12
   #comment_font_face: 'Avenir'
-  #comment_font_point: 16
+  comment_font_point: 16
 
 preset_color_schemes:
   native:
@@ -372,7 +373,7 @@ app_options:
   com.github.atom:
     ascii_mode: true
   com.microsoft.VSCode:
-    ascii_mode: true
+    ascii_mode: false
   com.sublimetext.2:
     ascii_mode: true
   org.gnu.Aquamacs:
